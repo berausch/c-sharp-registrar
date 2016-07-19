@@ -63,6 +63,20 @@ namespace Registrar
       //Assert
       Assert.Equal(testStudent, result);
     }
+
+    [Fact]
+    public void Test_DeleteDeletsStudentFromDatabase()
+    {
+      Student testStudent = new Student("Mow the lawn", DefaultDate);
+      testStudent.Save();
+
+      //Act
+      testStudent.Delete();
+      List<Student> allStudents = Student.GetAll();
+
+      //Assert
+      Assert.Equal(0, allStudents.Count);
+    }
     public void Dispose()
     {
       Student.DeleteAll();
