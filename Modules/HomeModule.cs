@@ -15,16 +15,26 @@ namespace Registrar
 
       Get["/courses"] = _ =>
       {
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Department> allDepartments = Department.GetAll();
         List<Course> allCourses = Course.GetAll();
-        return View["courses.cshtml", allCourses];
+        model.Add("departments", allDepartments);
+        model.Add("courses", allCourses);
+        return View["courses.cshtml", model];
       };
 
       Post["/courses"] = _ =>
       {
-        Course newCourse = new Course(Request.Form["course-name"], Request.Form["Department"], Request.Form["course-number"]);
+        Department newDepartment = Department.Find(Request.Form["department"]);
+        Course newCourse = new Course(Request.Form["course-name"], newDepartment.GetDepartmentCode(), Request.Form["course-number"]);
         newCourse.Save();
+        newCourse.AddDepartment(Request.Form["department"]);
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Department> allDepartments = Department.GetAll();
         List<Course> allCourses = Course.GetAll();
-        return View["courses.cshtml", allCourses];
+        model.Add("departments", allDepartments);
+        model.Add("courses", allCourses);
+        return View["courses.cshtml", model];
       };
 
       Get["/courses/{id}"] = chocolate => {
@@ -99,16 +109,26 @@ namespace Registrar
 
       Get["/students"] = _ =>
       {
+        Dictionary<string, object> model = new Dictionary<string, object>{};
         List<Student> allStudents = Student.GetAll();
-        return View["students.cshtml", allStudents];
+        List<Department> allDepartments = Department.GetAll();
+        model.Add("students", allStudents);
+        model.Add("departments", allDepartments);
+        return View["students.cshtml", model];
       };
 
       Post["/students"] = _ =>
       {
+        Department newDepartment = Department.Find(Request.Form["department"]);
         Student newStudent = new Student(Request.Form["student-name"], Request.Form["enrollment"]);
         newStudent.Save();
+        newStudent.AddDepartment(Request.Form["department"]);
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Department> allDepartments = Department.GetAll();
         List<Student> allStudents = Student.GetAll();
-        return View["students.cshtml", allStudents];
+        model.Add("departments", allDepartments);
+        model.Add("students", allStudents);
+        return View["students.cshtml", model];
       };
 
       Get["/students/{id}"] = chocolate => {
