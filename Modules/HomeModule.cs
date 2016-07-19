@@ -27,6 +27,29 @@ namespace Registrar
         return View["courses.cshtml", allCourses];
       };
 
+      Get["/courses/{id}"] = chocolate => {
+        Course newCourse = Course.Find(chocolate.id);
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Student> allStudents = Student.GetAll();
+        List<Student> enrolledStudents = newCourse.GetStudents();
+        model.Add("students", allStudents);
+        model.Add("course", newCourse);
+        model.Add("enrolledStudents", enrolledStudents);
+        return View["course.cshtml", model];
+      };
+      Post["/courses/{id}"] = chocolate => {
+        Course newCourse = Course.Find(chocolate.id);
+        Student newStudent = Student.Find(Request.Form["student-id"]);
+        newStudent.AddCourse(newCourse.GetId());
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Student> allStudents = Student.GetAll();
+        List<Student> enrolledStudents = newCourse.GetStudents();
+        model.Add("students", allStudents);
+        model.Add("course", newCourse);
+        model.Add("enrolledStudents", enrolledStudents);
+        return View["course.cshtml", model];
+      };
+
       Get["/students"] = _ =>
       {
         List<Student> allStudents = Student.GetAll();
@@ -39,6 +62,11 @@ namespace Registrar
         newStudent.Save();
         List<Student> allStudents = Student.GetAll();
         return View["students.cshtml", allStudents];
+      };
+
+      Get["/students/{id}"] = chocolate => {
+        Student newStudent = Student.Find(chocolate.id);
+        return View["student.cshtml", newStudent];
       };
     }
   }

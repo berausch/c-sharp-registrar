@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <title>@Model["course"].GetName()</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>@Model["course"].GetName()</h2>
+      <h4>@Model["course"].GetDepartment() - @Model["course"].GetCourseNumber()</h4>
+      <h4>Enrolled Students:</h4>
+      <ul>
+        @foreach (var student in Model["enrolledStudents"])
+        {
+          <li><a href="/students/@student.GetId()">@student.GetName()</a></li>
+        }
+      </ul>
+      <form class="form-group" action='/courses/@Model["course"].GetId()' method="post">
+        <input type="hidden" name="course-id" value='@Model["course"].GetId()'>
+        <select name="student-id">
+          @foreach (var student in Model["students"])
+          {
+            <option value="@student.GetId()">@student.GetName()</option>
+          }
+        </select>
+        <button type="submit" name="add-student">Add Student</button>
+      </form>
+    </div>
+  </body>
+</html>
