@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <title>@Model["student"].GetName()</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>@Model["student"].GetName()</h2>
+      <h4>Courses:</h4>
+      <ul>
+        @foreach (var course in Model["courses"])
+        {
+          <li><a href="/courses/@course.GetId()">@course.GetName()</a></li>
+        }
+      </ul>
+      @if(Model["registeredDepartment"].Count == 0)
+      {
+        <h3>Add this student to a department</h3>
+        <form class="form-group" action='/students/@Model["student"].GetId()/department' method="post">
+          <input type="hidden" name="student-id" value='@Model["student"].GetId()'>
+          <select name="department-id">
+            @foreach (var department in Model["departments"])
+            {
+              <option value="@department.GetId()">@department.GetName()</option>
+            }
+          </select>
+          <button type="submit" name="add-department">Add Department</button>
+        </form>
+      }
+      @if(Model["registeredDepartment"].Count == 1)
+      {
+        <p>@Model["student"].GetName() is registered to @Model["registeredDepartment"][0].GetName()</p>
+      }
+      <a href="/">Return Home</a> |
+      <a href="/courses">View all Courses.</a> |
+      <a href="/students">View all Students.</a> |
+      <a href="/departments">View all Departments.</a>
+    </div>
+  </body>
+</html>

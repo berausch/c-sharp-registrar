@@ -96,6 +96,22 @@ namespace Registrar
 
     }
 
+    [Fact]
+    public void Test_AddDepartment_AddsStudentToADepartment()
+    {
+      Student testStudent = new Student("Mow the lawn", DefaultDate);
+      testStudent.Save();
+      Department testDepartment = new Department("Math", "MTH");
+      testDepartment.Save();
+
+      //Act
+      testStudent.AddDepartment(testDepartment.GetId());
+      List<Student> result = testDepartment.GetStudents();
+      List<Student> expectedResult = new List<Student> {testStudent};
+      //Assert
+      Assert.Equal(expectedResult, result);
+    }
+
     // [Fact]
     // public void Testing()
     // {
@@ -115,6 +131,7 @@ namespace Registrar
     {
       Student.DeleteAll();
       Course.DeleteAll();
+      Department.DeleteAll();
     }
   }
 }

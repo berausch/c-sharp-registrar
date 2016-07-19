@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <title>@Model["department"].GetName()</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>@Model["department"].GetName()</h2>
+      <h4>Registered Courses:</h4>
+      <ul>
+        @foreach (var course in Model["courses"])
+        {
+          <li><a href="/courses/@course.GetId()">@course.GetName()</a></li>
+        }
+      </ul>
+      <h4>Enrolled Students:</h4>
+      <ul>
+        @foreach (var student in Model["students"])
+        {
+          <li><a href="/students/@student.GetId()">@student.GetName()</a></li>
+        }
+      </ul>
+      <a href="/courses">View all Courses.</a> |
+      <a href="/students">View all Students.</a> |
+      <a href="/departments">View all Departments.</a>
+    </div>
+  </body>
+</html>

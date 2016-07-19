@@ -156,21 +156,49 @@ namespace Registrar
 
     public void AddCourse(int courseId)
     {
+
+      if (!(this.GetCourses().Contains(Course.Find(courseId))))
+      {
+        SqlConnection conn = DB.Connection();
+        conn.Open();
+
+        SqlCommand cmd = new SqlCommand("INSERT INTO students_courses (student_id, course_id) VALUES (@studentId, @courseId);", conn);
+
+        SqlParameter studentIdParameter = new SqlParameter();
+        studentIdParameter.ParameterName = "@studentId";
+        studentIdParameter.Value = this._id;
+        cmd.Parameters.Add(studentIdParameter);
+
+        SqlParameter courseIdParameter = new SqlParameter();
+        courseIdParameter.ParameterName = "@courseId";
+        courseIdParameter.Value = courseId;
+        cmd.Parameters.Add(courseIdParameter);
+
+        cmd.ExecuteNonQuery();
+
+        if (conn != null)
+        {
+          conn.Close();
+        }
+      }
+    }
+
+    public void AddDepartment(int departmentId)
+    {
       SqlConnection conn = DB.Connection();
       conn.Open();
-      System.Console.WriteLine(courseId);
 
-      SqlCommand cmd = new SqlCommand("INSERT INTO students_courses (student_id, course_id) VALUES (@studentId, @courseId);", conn);
+      SqlCommand cmd = new SqlCommand("INSERT INTO students_departments (student_id, department_id) VALUES (@studentId, @departmentId);", conn);
 
       SqlParameter studentIdParameter = new SqlParameter();
       studentIdParameter.ParameterName = "@studentId";
       studentIdParameter.Value = this._id;
       cmd.Parameters.Add(studentIdParameter);
 
-      SqlParameter courseIdParameter = new SqlParameter();
-      courseIdParameter.ParameterName = "@courseId";
-      courseIdParameter.Value = courseId;
-      cmd.Parameters.Add(courseIdParameter);
+      SqlParameter departmentIdParameter = new SqlParameter();
+      departmentIdParameter.ParameterName = "@departmentId";
+      departmentIdParameter.Value = departmentId;
+      cmd.Parameters.Add(departmentIdParameter);
 
       cmd.ExecuteNonQuery();
 
@@ -178,6 +206,44 @@ namespace Registrar
       {
         conn.Close();
       }
+    }
+
+    public List<Department> GetAssignedDepartment()
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT departments.* FROM students JOIN students_departments ON (students.id = students_departments.student_id) JOIN departments ON (students_departments.department_id = departments.id) WHERE students.id = @studentId", conn);
+
+      SqlParameter studentIdParameter = new SqlParameter();
+      studentIdParameter.ParameterName = "@studentId";
+      studentIdParameter.Value = this.GetId().ToString();
+
+      cmd.Parameters.Add(studentIdParameter);
+
+      rdr = cmd.ExecuteReader();
+
+      List<Department> assignedDepartment = new List<Department> {};
+
+      while(rdr.Read())
+      {
+        int foundDepartmentId = rdr.GetInt32(0);
+        string foundDepartmentName = rdr.GetString(1);
+        string foundDepartmentCode = rdr.GetString(2);
+        Department foundDepartment = new Department(foundDepartmentName, foundDepartmentCode, foundDepartmentId);
+        assignedDepartment.Add(foundDepartment);
+      }
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return assignedDepartment;
     }
 
     public List<Course> GetCourses()

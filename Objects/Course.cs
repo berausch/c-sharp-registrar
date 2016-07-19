@@ -207,6 +207,68 @@ namespace Registrar
       return allStudents;
     }
 
+    public void AddDepartment(int departmentId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO departments_courses (department_id, course_id) VALUES (@departmentId, @courseId);", conn);
+
+      SqlParameter courseIdParameter = new SqlParameter();
+      courseIdParameter.ParameterName = "@courseId";
+      courseIdParameter.Value = this._id;
+      cmd.Parameters.Add(courseIdParameter);
+
+      SqlParameter departmentIdParameter = new SqlParameter();
+      departmentIdParameter.ParameterName = "@departmentId";
+      departmentIdParameter.Value = departmentId;
+      cmd.Parameters.Add(departmentIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+    public List<Department> GetAssignedDepartment()
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT departments.* FROM courses JOIN departments_courses ON (courses.id = departments_courses.course_id) JOIN departments ON (departments_courses.department_id = departments.id) WHERE courses.id = @courseId", conn);
+
+      SqlParameter courseIdParameter = new SqlParameter();
+      courseIdParameter.ParameterName = "@courseId";
+      courseIdParameter.Value = this.GetId().ToString();
+
+      cmd.Parameters.Add(courseIdParameter);
+
+      rdr = cmd.ExecuteReader();
+
+      List<Department> assignedDepartment = new List<Department> {};
+      while(rdr.Read())
+      {
+        int foundDepartmentId = rdr.GetInt32(0);
+        string foundDepartmentName = rdr.GetString(1);
+        string foundDepartmentCode = rdr.GetString(2);
+        Department foundDepartment = new Department(foundDepartmentName, foundDepartmentCode, foundDepartmentId);
+        assignedDepartment.Add(foundDepartment);
+      }
+
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return assignedDepartment;
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();

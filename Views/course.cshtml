@@ -26,6 +26,31 @@
         </select>
         <button type="submit" name="add-student">Add Student</button>
       </form>
+      @if(Model["registeredDepartment"].Count == 0)
+      {
+        <h3>Add this class to a department</h3>
+        <form class="form-group" action='/courses/@Model["course"].GetId()/department' method="post">
+          <input type="hidden" name="course-id" value='@Model["course"].GetId()'>
+          <select name="department-id">
+            @foreach (var department in Model["departments"])
+            {
+              <option value="@department.GetId()">@department.GetName()</option>
+            }
+          </select>
+          <button type="submit" name="add-department">Add Department</button>
+        </form>
+      }
+      @if(Model["registeredDepartment"].Count != 0)
+      {
+        @foreach (var department in Model["registeredDepartment"])
+        {
+          <p>@Model["course"].GetName() is registered to the @department.GetName() department</p>
+
+        }
+      }
+      <a href="/courses">View all Courses.</a> |
+      <a href="/students">View all Students.</a> |
+      <a href="/departments">View all Departments.</a>
     </div>
   </body>
 </html>
