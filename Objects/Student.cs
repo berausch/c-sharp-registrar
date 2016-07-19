@@ -154,6 +154,53 @@ namespace Registrar
       return foundStudent;
     }
 
+    public void EditStudent(string newName, DateTime newEnrollment, int newDepartmentId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("UPDATE students SET name = @name, enrollment = @enrollment WHERE id = @studentId;", conn);
+      SqlParameter studentIdParameter = new SqlParameter();
+      studentIdParameter.ParameterName = "@studentId";
+      studentIdParameter.Value = this.GetId();
+
+      cmd.Parameters.Add(studentIdParameter);
+
+      SqlParameter nameParameter = new SqlParameter();
+      nameParameter.ParameterName = "@name";
+      nameParameter.Value = newName;
+
+      cmd.Parameters.Add(nameParameter);
+
+      SqlParameter enrollmentParameter = new SqlParameter();
+      enrollmentParameter.ParameterName = "@enrollment";
+      enrollmentParameter.Value = newEnrollment;
+
+      cmd.Parameters.Add(enrollmentParameter);
+      cmd.ExecuteNonQuery();
+
+      SqlCommand cmd2 = new SqlCommand("UPDATE students_departments SET department_id = @departmentId WHERE student_id = @studentId;", conn);
+
+      SqlParameter studentIdParameter2 = new SqlParameter();
+      studentIdParameter2.ParameterName = "@studentId";
+      studentIdParameter2.Value = this.GetId();
+
+      cmd2.Parameters.Add(studentIdParameter2);
+
+      SqlParameter departmentIdParameter = new SqlParameter();
+      departmentIdParameter.ParameterName = "@departmentId";
+      departmentIdParameter.Value = newDepartmentId;
+
+      cmd2.Parameters.Add(departmentIdParameter);
+
+      cmd2.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
     public void AddCourse(int courseId)
     {
 

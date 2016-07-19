@@ -144,6 +144,32 @@ namespace Registrar
         return View["student.cshtml", model];
       };
 
+      Patch["/students/{id}"] = chocolate => {
+        Student newStudent = Student.Find(chocolate.id);
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        newStudent.EditStudent(Request.Form["student-name"], Request.Form["enrollment"], Request.Form["department"]);
+        List<Course> allCourses = newStudent.GetCourses();
+        List<Department> allDepartments = Department.GetAll();
+        List<Department> registeredDepartment = newStudent.GetAssignedDepartment();
+        model.Add("registeredDepartment", registeredDepartment);
+        model.Add("departments", allDepartments);
+        model.Add("student", newStudent);
+        model.Add("courses", allCourses);
+        return View["student.cshtml", model];
+      };
+
+      Get["/students/update/{id}"] = chocolate => {
+        Student newStudent = Student.Find(chocolate.id);
+        Dictionary<string, object> model = new Dictionary<string, object>{};
+        List<Department> allDepartments = Department.GetAll();
+        List<Department> registeredDepartment = newStudent.GetAssignedDepartment();
+        model.Add("registeredDepartment", registeredDepartment);
+        model.Add("departments", allDepartments);
+        model.Add("student", newStudent);
+        return View["student_form.cshtml", model];
+      };
+
+
       Post["/students/{id}/department"] = chocolate => {
         Student newStudent = Student.Find(chocolate.id);
         newStudent.AddDepartment(Request.Form["department-id"]);

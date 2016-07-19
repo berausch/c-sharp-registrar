@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <title>@Model["student"].GetName()</title>
+  </head>
+  <body>
+    <div class="container">
+      <h4>Edit Student</h4>
+      <form class="form-group" action='/students/@Model["student"].GetId()' method="post">
+        <input type="hidden" name="_method" value="PATCH">
+        <label for="student-name">Enter Student's Name:</label>
+        <input type="text" name="student-name" value='@Model["student"].GetName()' required>
+        <label for="enrollment">Enrolled Starting:</label>
+        <input type="date" name="enrollment" value='@Model["student"].GetEnrollment()'>
+        <label for="department">Enter Student's Major:</label>
+        <select name="department">
+          @foreach(var department in Model["departments"])
+          {
+            @if(department.GetId() == Model["registeredDepartment"][0].GetId())
+            {
+              <option selected="selected" value="@department.GetId()">@department.GetName()</option>
+            }
+            else
+            {
+              <option value="@department.GetId()">@department.GetName()</option>
+            }
+          }
+        </select>
+        <button class="btn" type="submit" name="button">Submit</button>
+      </form>
+      <a href="/">Return Home</a> |
+      <a href="/courses">View all Courses.</a> |
+      <a href="/departments">View all Departments.</a>
+    </div>
+  </body>
+</html>
