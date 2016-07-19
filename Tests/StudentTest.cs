@@ -77,10 +77,47 @@ namespace Registrar
       //Assert
       Assert.Equal(0, allStudents.Count);
     }
+
+    [Fact]
+    public void Test_GetCourses_GetsAllOfStudentsCourses()
+    {
+      //Arrange
+      Student testStudent = new Student("Mow the lawn", DefaultDate);
+      testStudent.Save();
+      Course testCourse = new Course("Lawn Care", "HOR", 100);
+      testCourse.Save();
+      List<Course> expectedResult = new List<Course> {testCourse};
+      System.Console.WriteLine("StudentId=" + testStudent.GetId());
+      System.Console.WriteLine("CourseId=" + testCourse.GetId());
+
+      //Act
+      testStudent.AddCourse(testCourse.GetId());
+      List<Course> result = testStudent.GetCourses();
+
+      //Assert
+      Assert.Equal(expectedResult, result);
+
+    }
+
+    // [Fact]
+    // public void Testing()
+    // {
+    //   Student testStudent = new Student("Mow the lawn", DefaultDate);
+    //   testStudent.Save();
+    //   Course testCourse = new Course("Lawn Care", "HOR", 100);
+    //   testCourse.Save();
+    //
+    //   testStudent.AddCourse(testCourse.GetId());
+    //
+    //   Assert.Equal(0, 0);
+    //
+    // }
+
+
     public void Dispose()
     {
       Student.DeleteAll();
-      // Category.DeleteAll();
+      Course.DeleteAll();
     }
   }
 }

@@ -153,11 +153,82 @@ namespace Registrar
       }
       return foundStudent;
     }
+
+    public void AddCourse(int courseId)
+    {
+      SqlConnection conn = DB.Connection();
+      conn.Open();
+      System.Console.WriteLine(courseId);
+
+      SqlCommand cmd = new SqlCommand("INSERT INTO students_courses (student_id, course_id) VALUES (@studentId, @courseId);", conn);
+
+      SqlParameter studentIdParameter = new SqlParameter();
+      studentIdParameter.ParameterName = "@studentId";
+      studentIdParameter.Value = this._id;
+      cmd.Parameters.Add(studentIdParameter);
+
+      SqlParameter courseIdParameter = new SqlParameter();
+      courseIdParameter.ParameterName = "@courseId";
+      courseIdParameter.Value = courseId;
+      cmd.Parameters.Add(courseIdParameter);
+
+      cmd.ExecuteNonQuery();
+
+      if (conn != null)
+      {
+        conn.Close();
+      }
+    }
+
+    public List<Course> GetCourses()
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
+
+      System.Console.WriteLine("GetCourses studentId=" + this._id);
+
+      SqlCommand cmd = new SqlCommand("SELECT courses.* FROM students JOIN students_courses ON (students.id = students_courses.student_id) JOIN courses ON (students_courses.course_id = courses.id) WHERE students.id = @studentId;", conn);
+
+      SqlParameter studentIdParameter = new SqlParameter();
+      studentIdParameter.ParameterName = "@studentId";
+      studentIdParameter.Value = this.GetId().ToString();
+
+      System.Console.WriteLine("Parameter" + studentIdParameter.Value);
+      cmd.Parameters.Add(studentIdParameter);
+
+      rdr = cmd.ExecuteReader();
+
+      List<Course> allCourses = new List<Course>{};
+
+      while(rdr.Read())
+      {
+        System.Console.WriteLine("Hewllo");
+        System.Console.WriteLine(rdr.GetInt32(0));
+        
+        int courseId = rdr.GetInt32(0);
+        string courseName = rdr.GetString(1);
+        string courseDepartment = rdr.GetString(2);
+        int courseNumber = rdr.GetInt32(3);
+        Course newCourse = new Course(courseName, courseDepartment, courseNumber, courseId);
+        allCourses.Add(newCourse);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return allCourses;
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();
       conn.Open();
-      SqlCommand cmd = new SqlCommand("DELETE FROM students;", conn);
+      SqlCommand cmd = new SqlCommand("DELETE FROM students; DELETE FROM students_courses", conn);
       cmd.ExecuteNonQuery();
     }
     public void Delete()
@@ -165,7 +236,7 @@ namespace Registrar
       SqlConnection conn = DB.Connection();
       conn.Open();
 
-      SqlCommand cmd = new SqlCommand("DELETE FROM students WHERE id = @StudentId;", conn);
+      SqlCommand cmd = new SqlCommand("DELETE FROM students WHERE id = @StudentId; DELETE FROM students_courses WHERE student_id = @StudentId;", conn);
 
       SqlParameter studentIdParameter = new SqlParameter();
       studentIdParameter.ParameterName = "@StudentId";
