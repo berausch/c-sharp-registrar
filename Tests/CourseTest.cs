@@ -8,6 +8,7 @@ namespace Registrar
 {
   public class CourseTest : IDisposable
   {
+    public static DateTime DefaultDate = new DateTime(2016, 7, 19);
     public CourseTest()
     {
       DBConfiguration.ConnectionString = "Data Source=(localdb)\\mssqllocaldb;Initial Catalog=registrar_test;Integrated Security=SSPI;";
@@ -76,10 +77,30 @@ namespace Registrar
       //Assert
       Assert.Equal(0, allCourses.Count);
     }
+    [Fact]
+    public void Test_GetStudents_GetsAllStudentsEnrolledInCourse()
+    {
+      //Arrange
+      Student testStudent = new Student("Mow the lawn", DefaultDate);
+      testStudent.Save();
+      Student testStudentTwo = new Student("Lazy Larry", DefaultDate);
+      testStudentTwo.Save();
+      Course testCourse = new Course("Lawn Care", "HOR", 100);
+      testCourse.Save();
+      testStudent.AddCourse(testCourse.GetId());
+      List<Student> expectedResult = new List<Student> {testStudent};
+
+      //Act
+      List<Student> result = testCourse.GetStudents();
+
+      //Assert
+      Assert.Equal(expectedResult, result);
+    }
 
     public void Dispose()
     {
       Course.DeleteAll();
+      Student.DeleteAll();
     }
   }
 }

@@ -173,6 +173,40 @@ namespace Registrar
       }
       return foundCourse;
     }
+
+    public List<Student> GetStudents()
+    {
+      SqlConnection conn = DB.Connection();
+      SqlDataReader rdr;
+      conn.Open();
+
+      SqlCommand cmd = new SqlCommand("SELECT students.* FROM students JOIN students_courses ON (students.id = students_courses.student_id) JOIN courses ON (students_courses.course_id = courses.id) WHERE courses.id = @courseId;", conn);
+      SqlParameter courseIdParameter = new SqlParameter();
+      courseIdParameter.ParameterName = "@courseId";
+      courseIdParameter.Value = this.GetId().ToString();
+      cmd.Parameters.Add(courseIdParameter);
+
+      rdr = cmd.ExecuteReader();
+      List<Student> allStudents = new List<Student> {};
+      while(rdr.Read())
+      {
+        int studentId = rdr.GetInt32(0);
+        string studentName = rdr.GetString(1);
+        DateTime studentEnrollment = rdr.GetDateTime(2);
+        Student newStudent = new Student(studentName, studentEnrollment, studentId);
+        allStudents.Add(newStudent);
+      }
+      if (rdr != null)
+      {
+        rdr.Close();
+      }
+      if (conn != null)
+      {
+        conn.Close();
+      }
+      return allStudents;
+    }
+
     public static void DeleteAll()
     {
       SqlConnection conn = DB.Connection();

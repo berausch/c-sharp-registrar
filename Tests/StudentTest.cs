@@ -87,9 +87,6 @@ namespace Registrar
       Course testCourse = new Course("Lawn Care", "HOR", 100);
       testCourse.Save();
       List<Course> expectedResult = new List<Course> {testCourse};
-      System.Console.WriteLine("StudentId=" + testStudent.GetId());
-      System.Console.WriteLine("CourseId=" + testCourse.GetId());
-
       //Act
       testStudent.AddCourse(testCourse.GetId());
       List<Course> result = testStudent.GetCourses();

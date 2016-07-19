@@ -186,15 +186,12 @@ namespace Registrar
       SqlDataReader rdr;
       conn.Open();
 
-      System.Console.WriteLine("GetCourses studentId=" + this._id);
-
       SqlCommand cmd = new SqlCommand("SELECT courses.* FROM students JOIN students_courses ON (students.id = students_courses.student_id) JOIN courses ON (students_courses.course_id = courses.id) WHERE students.id = @studentId;", conn);
 
       SqlParameter studentIdParameter = new SqlParameter();
       studentIdParameter.ParameterName = "@studentId";
       studentIdParameter.Value = this.GetId().ToString();
 
-      System.Console.WriteLine("Parameter" + studentIdParameter.Value);
       cmd.Parameters.Add(studentIdParameter);
 
       rdr = cmd.ExecuteReader();
@@ -203,9 +200,6 @@ namespace Registrar
 
       while(rdr.Read())
       {
-        System.Console.WriteLine("Hewllo");
-        System.Console.WriteLine(rdr.GetInt32(0));
-        
         int courseId = rdr.GetInt32(0);
         string courseName = rdr.GetString(1);
         string courseDepartment = rdr.GetString(2);
